@@ -1,0 +1,1702 @@
+<!doctype html>  
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PENDIENTES V9</title>
+  <style>
+    :root {
+  /*  MODO OSCURO */
+  --bg: #181818; /* Fondo general del sitio */
+  --card: #1c1f29; /* Fondo principal de las secciones */
+  --muted: #9ca3af; /* Texto secundario o gris */
+  --text: #ffffff; /* Texto principal */
+  --ring: #2a2f3a; /* Bordes y divisores */
+  --accent: #FF6A13; /* Color de acento principal (botones, resaltes) */
+  --accent-alt: #1e40af; /* Acento alternativo */
+  --focus: #ffffff; /* Borde blanco cuando algo esta en focus */
+  --clear-btn-dark: #ffffff; /* Color del icono "X" en modo oscuro */
+  --summary-bg: rgba(28, 31, 41, 0.55);
+  --summary-text: var(--text);
+
+  /* Tarjetas */
+  --card-bg: #1c1f29; /* Fondo principal de la tarjeta */
+  --card-border: #2a2f3a; /* Borde de la tarjeta y divisores internos */
+  --card-title: #ffffff; /* Color del titulo grande de la tarjeta */
+  --card-label: #9ca3af; /* Color de las etiquetas pequenas */
+  --card-text: #ffffff; /* Texto dentro de cada chip o detalle */
+  --card-hover-bg: rgba(255,255,255,0.05); /* Fondo al pasar el mouse sobre un chip */
+  --card-notes-bg: #131217; /* Fondo del area de observaciones */
+  --card-notes-text: #e5e7eb; /* Texto dentro de las observaciones */
+  --card-shadow: 0 6px 18px rgba(0,0,0,0.4); /* Sombra normal de la tarjeta */
+  --card-hover-shadow: 0 8px 25px rgba(0,0,0,0.5); /* Sombra al pasar el mouse sobre la tarjeta */
+  --card-highlight: #FF6A13; /* Color de animacion al resaltar o abrir una tarjeta */
+}
+
+body.light {
+  /* MODO CLARO */
+  --bg: linear-gradient(180deg, #ffffff 0%, #f4f7ff 55%, #eaf1ff 100%);
+  --card: #ffffff;
+  --muted: #5f6f8d;
+  --text: #1f2a48;
+  --ring: #d7deec;
+  --accent: #FF6A13;
+  --accent-alt: #0f3d91;
+  --focus: #ff8c45;
+  --clear-btn-dark: #4c5c7d;
+  --summary-bg: linear-gradient(135deg, rgba(15,61,145,0.92) 0%, rgba(31,59,138,0.92) 55%, rgba(123,40,105,0.88) 100%);
+  --summary-text: #ffffff;
+  /* Tarjetas */
+  --card-bg: #ffffff;
+  --card-border: #dfe5f3;
+  --card-title: #1a2a58;
+  --card-label: #52648a;
+  --card-text: #2a3a5f;
+  --card-hover-bg: rgba(15,61,145,0.06);
+  --card-notes-bg: #f7f9fd;
+  --card-notes-text: #1f2a48;
+  --card-shadow: 0 12px 30px rgba(15,61,145,0.08);
+  --card-hover-shadow: 0 18px 40px rgba(15,61,145,0.12);
+  --card-highlight: #ff8f53;
+}
+
+/* Ajustes modo claro */
+body.light .sidebar,
+body.light .rightbar{
+  background:transparent;
+  border:none;
+  box-shadow:none;
+}
+body.light .chip-unificado,
+body.light .pending-link{
+  background:transparent;
+  border:1px solid transparent;
+}
+body.light .chip-unificado:hover,
+body.light .pending-link:hover{
+  background:rgba(15,61,145,0.08);
+  border-color:transparent;
+}
+body.light .chip-unificado.active,
+body.light .pending-link.active{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:#fff !important;
+}
+body.light .chip--nocopy{
+  opacity:0.82;
+  border-style:dashed;
+}
+body.light .notes-box{
+  border:1px solid rgba(15,61,145,0.12);
+  background:rgba(255,255,255,0.85);
+}
+body.light .credits{
+  color:#5f6f8d;
+}
+    .credits { 
+      font-size: 10.6px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 20px;
+      line-height: 1.5;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:Inter,system-ui,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      display:flex;
+      min-height:100vh;
+      transition:background .3s,color .3s;
+      font-size:14px;
+    }
+    body,
+    body *{
+      -webkit-user-select:none;
+      user-select:none;
+    }
+    input,
+    textarea,
+    [contenteditable="true"],
+    .allow-text-selection{
+      -webkit-user-select:text;
+      user-select:text;
+    }
+
+    /* Sidebar */
+    .sidebar{width:240px;display:flex;flex-direction:column;padding:40px 20px 20px;position:relative;}
+    .logo{font-size:34px;font-weight:900;color:var(--text);text-align:center;margin-bottom:20px;}
+
+/* Agencia */
+#agencyContainer {
+  display: flex;
+  flex-direction: column;
+  position: relative; /*  agregala aqui */
+  gap: 10px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+#agencyContainer > *{
+  width: 100%;
+}
+.sidebar-lists{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  width:100%;
+  overflow-y:auto;
+  padding:12px 0;
+}
+.sidebar-lists > *{
+  width:100%;
+}
+.sidebar-lists .section-title{
+  margin:0;
+  text-align:center;
+}
+
+    .agency-chip{
+      padding:10px 14px;
+      border-radius:20px;
+      background:var(--accent);
+      color:#fff;
+      cursor:pointer;
+      text-align:center;
+      font-size:14px;
+      font-weight:600;
+      margin-bottom:10px;
+      transition:all .3s ease;
+      border:1px solid transparent;
+    }
+    .agency-chip:hover{opacity:0.9;}
+    .agency-chip.selected{
+      background:var(--card);
+      color:var(--text);
+      border:1px solid var(--accent-alt);
+    }
+    .agency-input{
+      width:100%;
+      padding:10px 14px;
+      border-radius:20px;
+      border:1px solid var(--ring);
+      background:var(--card);
+      color:var(--text);
+      font-size:14px;
+      font-weight:500;
+      outline:none;
+      text-align:center;
+    }
+    .agency-input:focus,
+    .agency-input:focus-visible{
+      border:1px solid var(--focus) !important;
+      outline:none !important;
+      box-shadow:none !important;
+    }
+    .suggestions{margin-top:6px;border-radius:10px;overflow:hidden;background:var(--card);box-shadow:0 4px 12px rgba(0,0,0,.3);}
+    .suggestion-item{padding:10px;font-size:13px;cursor:pointer;text-align:center;}
+
+
+    /* Favoritos y ATM */
+    .section-title{font-size:11px;font-weight:700;text-transform:uppercase;margin:14px 0 8px;color:var(--muted);text-align:left;}
+    .sidebar .section-title{text-align:center;}
+    .chip-link{
+      padding:10px 14px;
+      border-radius:20px;
+      text-align:left;
+      cursor:pointer;
+      opacity:.9;
+      transition:.2s;
+      margin-bottom:8px;
+      border:1px solid transparent;
+      overflow:hidden;
+      white-space:nowrap;
+      text-overflow:ellipsis;
+    }
+    .chip-link:hover{background:rgba(255,255,255,0.08);opacity:1}
+    .chip-link.active{border:1px solid var(--accent-alt);color:var(--text);background:var(--card);}
+
+    /* RUC + SWIFT */
+    .ruc-box{margin-top:auto;display:flex;flex-direction:column;gap:6px;align-items:center;padding-top:24px;}
+    .ruc-value{width:100%;background:var(--card);border:1px solid var(--ring);border-radius:6px;padding:6px 8px;font-size:11px;text-align:center;cursor:pointer;}
+
+    /* Main */
+    .main{flex:1;display:flex;flex-direction:column;align-items:center;padding:20px;position:relative;}
+    .center-box{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+    .title-line{font-family:"Poppins",Arial Black,Helvetica,sans-serif;font-weight:800;font-size:34px;text-transform:uppercase;letter-spacing:.5px;line-height:1.2;color:var(--text);}
+
+    /* Buscador */
+    .search-pending{margin-top:20px;display:flex;justify-content:center;position:relative;width:500px;max-width:90%}
+    .search-pending input{
+      width:100%;
+      padding:12px 40px 12px 16px;
+      border-radius:24px;
+      border:1px solid var(--ring);
+      background:var(--card);
+      color:var(--text);
+      font-size:14px;
+      text-align:center;
+      outline:none;
+    }
+    .search-pending input:focus,
+    .search-pending input:focus-visible{
+      border:1px solid var(--focus) !important;
+      outline:none !important;
+      box-shadow:none !important;
+    }
+    .clear-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;display:none;border:none;background:none;padding:0;}
+    .clear-btn svg{width:24px;height:24px;fill:var(--clear-btn-dark);transition:fill 0.2s;}
+    .clear-btn:hover svg{fill:var(--accent)}
+
+    /* Resultados */
+    #results{margin-top:20px;width:100%;display:flex;flex-direction:column;align-items:center;}
+    .result-item{padding:10px 14px;border-radius:8px;background:transparent;border:1px solid transparent;margin:10px auto;cursor:pointer;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:500px;max-width:90%;}
+    .result-item:hover{background:rgba(255,255,255,0.08)}
+
+    /* Tarjetas */
+.card{
+    border:1px solid var(--ring);
+    border-radius:12px;
+    background:var(--card);
+    margin:12px auto;
+    overflow:hidden;
+    width:700px;
+    max-width:95%;
+    box-shadow:0 8px 20px rgba(0,0,0,0.35), 0 4px 10px rgba(0,0,0,0.25);
+    position:relative;
+  }
+
+.summary{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 16px;
+  background:var(--summary-bg);
+  color:var(--summary-text);
+  border-bottom:1px solid var(--ring);
+  border-top-left-radius:12px;
+  border-top-right-radius:12px;
+  gap:8px;
+}
+
+.card-title{
+  font-weight:800;
+  font-size:15px;
+  text-transform:uppercase;
+  text-align:center;
+  flex:1;
+  color:inherit;
+}
+
+.star{cursor:pointer;font-size:24px;margin-left:10px;user-select:none}
+.star.active{color:var(--accent)}
+
+
+
+
+
+
+
+.content{padding:10px;display:grid;gap:12px;border-top:1px dashed var(--ring);background:var(--bg);text-align:center}
+
+.label{font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;text-align:center}
+
+    .chip{border:1px solid var(--ring);background:var(--card);padding:8px 14px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;display:inline-block;margin:4px;transition:all .3s ease;min-width:200px;}
+    .chip:hover{background:rgba(255,255,255,0.08);}
+    .chip-group{display:flex;justify-content:center;flex-wrap:wrap;gap:4px}
+    .chip--nocopy{cursor:default;opacity:0.85;}
+    .chip--nocopy:hover{background:var(--card);}
+    /* Ajustes modo claro */
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+#pendingCards {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  width:100%;
+  margin-top:20px;
+  padding:20px 0;
+}
+
+.token-card-wrapper{
+  display:flex;
+  flex-wrap:nowrap;
+  justify-content:space-between;
+  align-items:stretch;
+  gap:16px;
+  width:100%;
+}
+.token-card-wrapper .card.token-card{
+  flex:1 1 0;
+  width:calc(50% - 8px);
+  min-width:0;
+  margin:12px 0;
+}
+@media (max-width: 720px){
+  .token-card-wrapper{
+    flex-direction:column;
+    align-items:center;
+  }
+  .token-card-wrapper .card.token-card{
+    width:100%;
+    max-width:95%;
+  }
+}
+
+.chip-unificado {
+  padding: 10px 14px;
+  border-radius: 20px;
+  text-align: left;
+  cursor: pointer;
+  opacity: 0.9;
+  transition: 0.25s ease;
+  margin-bottom: 8px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text);
+  background: transparent;
+}
+
+/* Hover: leve brillo */
+.chip-unificado:hover {
+  background: rgba(255, 255, 255, 0.1);
+  opacity: 1;
+}
+
+
+/* Activo (clicado) - mismo color que Agencias */
+  .chip-unificado.active {
+    background: var(--accent); /* Coincide con el color del cuadro de agencia */
+    color: #fff !important;
+    border: 1px solid var(--accent);
+    opacity: 1;
+  }
+  
+  .chip-unificado.recently-used {
+    background: rgba(52, 92, 214, 0.18);
+    border: 1px solid transparent;
+    box-shadow: none;
+  }
+
+  body.light .chip-unificado.recently-used {
+    background: rgba(52, 92, 214, 0.28);
+    border: 1px solid transparent;
+    box-shadow: none;
+  }
+  
+  .chip-unificado.active.recently-used {
+    background: var(--accent);
+    color: #fff !important;
+    border-color: var(--accent);
+    box-shadow: none;
+  }
+  
+  body.light .chip-unificado.active.recently-used {
+    background: var(--accent);
+    color: #fff !important;
+    border-color: var(--accent);
+  }
+
+
+/*  Igualar estilo de texto con las agencias (lado izquierdo) */
+.chip-unificado,
+.pending-link {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-weight: 500 !important;
+  color: var(--text) !important;
+  font-size: 13px !important; /* mismo tamano que agencias */
+  letter-spacing: 0.2px;
+  line-height: 1.3;
+}
+
+
+
+
+#favoritesList,
+#atmList,
+#pendingsList,
+#pendingsContainer,
+.pendings,
+.pendings-list,
+.pendings-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-weight: 500;
+  color: var(--text);
+  font-size: 0.95rem;
+  letter-spacing: 0.2px;
+}
+
+
+
+
+
+/* Highlight */
+.highlight {animation: highlight 0.4s ease;}
+@keyframes highlight {0% { background: var(--card); color: var(--text);}50% { background: var(--accent); color: #fff;}100% { background: var(--card); color: var(--text);}}
+
+    /* Rightbar */
+    .rightbar{
+      width:240px;
+      padding:12px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      gap:10px;
+      min-height:100vh;
+    }
+    #pendingList{
+      width:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:stretch;
+      gap:4px;
+    }
+    .pending-link{
+      padding:8px 14px;
+      border-radius:18px;
+      text-align:left;
+      cursor:pointer;
+      opacity:.9;
+      transition:.2s;
+      margin-bottom:2px;
+      border:1px solid transparent;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .pending-link:hover{background:rgba(255,255,255,0.08);opacity:1}
+    .pending-link.active{border:1px solid var(--accent-alt);color:var(--text);background:var(--card);}
+
+    /* Navegacion derecha */
+    .nav-buttons{display:flex;justify-content:center;gap:16px;margin-top:12px;}
+    .nav-btn{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;transition:0.2s;}
+    .nav-btn svg{width:18px;height:18px;fill:#fff;}
+    .nav-btn.active{background:var(--accent);}
+    .nav-btn.disabled{background:#555;opacity:0.5;cursor:not-allowed;}
+
+    /* Observaciones */
+    .info-icon {
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--accent);
+      margin-right: 10px;
+      user-select: none;
+    }
+    .notes-box {
+      position: absolute;
+      top: 48px;
+      left: 18px;
+      background: var(--card-notes-bg);
+      color: var(--card-notes-text);
+      border: 1px solid var(--ring);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 12px;
+      font-weight: 500;
+      text-align: left;
+      width: clamp(200px, 42vw, 260px);
+      white-space: pre-wrap;
+      max-height: 140px;
+      overflow-y: auto;
+      box-shadow: 0 14px 28px rgba(0,0,0,0.35);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px) scale(0.96);
+      pointer-events: none;
+      transition: opacity .22s ease, transform .22s ease, visibility .22s ease;
+      z-index: 25;
+    }
+    .notes-box::before{
+      content:"";
+      position:absolute;
+      top:-6px;
+      left:26px;
+      width:12px;
+      height:12px;
+      background:inherit;
+      border-left:1px solid var(--ring);
+      border-top:1px solid var(--ring);
+      transform:rotate(45deg);
+    }
+    .notes-box.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+.logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.logo:focus-visible {
+  outline: 2px solid var(--accent);
+  box-shadow: 0 0 0 4px rgba(255,106,19,0.25);
+}
+
+.logo svg {
+  width: 85px; /*  TAMANO LOGO BCP */
+  height: auto;
+  transition: transform 0.2s ease;
+}
+.logo:hover svg,
+.logo:focus-visible svg {
+  transform: scale(1.06);
+}
+
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+   
+  <aside class="sidebar">
+    <div id="modeToggle" class="logo" role="button" tabindex="0" aria-label="Cambiar a modo claro">
+  <svg viewBox="0 0 24 24" width="48" height="48">
+    <path clip-rule="evenodd"
+      d="M 20.8582 14.427 C 18.4013 18.351 11.699 22.8238 9.79985 23.4946 C 6.10638 25.04 3.60596 22.1739 3.39248 21.8733 C 2.70343 20.9859 2.53606 20.7984 2.20259 20.151 C 2.13754 20.2584 9.2927 16.9299 11.8563 12.6238 C 14.6327 8.92531 14.8746 1.67036 11.8424 0.306152 C 12.7594 0.767837 14.9201 2.00826 16.8697 3.74573 C 18.815 5.39478 20.4963 7.55731 20.4603 7.52952 C 20.6655 7.80805 23.1022 10.8409 20.8582 14.427 Z"
+      fill="rgb(255, 120, 0)" />
+    <path clip-rule="evenodd"
+      d="M 13.0396 10.492 C 14.6192 6.64315 14.3627 1.43957 11.8427 0.305884 C 9.53559 -0.776643 6.91264 2.30546 6.79011 2.46525 C 6.79011 2.46525 5.92422 3.52188 5.26611 5.00104 C 5.71769 5.24736 6.58232 5.6762 6.58232 5.6762 C 8.35706 6.52757 10.7608 8.02125 13.0396 10.492 Z"
+      fill="rgb(0, 42, 141)" />
+      
+  </svg>
+</div>
+
+    <div id="agencyContainer">
+      <div id="agencyBox"></div>
+      <div id="suggestions" class="suggestions" style="display:none;"></div>
+    </div>
+    <div class="sidebar-lists">
+      <div class="section-title">Favoritos</div>
+      <div id="favoritesList"></div>
+      <div class="section-title">ATM</div>
+      <div id="atmList"></div>
+    </div>
+    <div class="ruc-box">
+      <div id="swift" class="ruc-value">BCPLPEPL</div>
+      <div id="ruc" class="ruc-value">20100047218</div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="center-box">
+      <div class="title-line">SISTEMA DE GESTION</div>
+      <div class="title-line">DE PENDIENTES</div>
+      <div class="search-pending">
+        <input id="pendingSearch" type="text" placeholder="Buscar pendiente" />
+        <button id="clearBtn" class="clear-btn" aria-label="Limpiar busqueda">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="11" fill="currentColor" opacity="0.1"/>
+            <path d="M15 9L9 15M9 9l6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div id="results"></div>
+      <div id="pendingCards"></div>
+      <div class="credits">
+        © 2025 SGP 9 | Todos los derechos reservados. Datos elaborados por Fabrizio Choy & Rodolfo Mostacero para uso Interno.<br>
+      </div>
+    </div>
+  </main>
+
+  <!-- Rightbar -->
+  <aside class="rightbar">
+    <div id="pendingList"></div>
+    <div class="nav-buttons">
+      <button id="prevBtn" class="nav-btn disabled">
+        <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>
+      </button>
+      <button id="nextBtn" class="nav-btn disabled">
+        <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+  </aside>
+  <script>
+/***** Datos base *****/
+const AGENCIES = ["AG. MEXICO",
+    "AG. MALL PLAZA ANGAMOS",
+    "AG. AVIACION",
+    "AG. TORRE AMERICA",
+    "AG. GAMARRA MODA PLAZA",
+    "AG. PARQUE CANEPA",
+    "AG. GAMARRA",
+    "AG. CANADA",
+    "AG. SAN BORJA",
+    "AG. FRAY LUIS DE LEON",
+    "AG. ANGAMOS",
+    "AG. RISSO",
+    "AG. ARENALES",
+    "AG. PETIT THOUARS",
+    "AG. SAN BORJA SUR",
+    "AG. C.C. LA RAMBLA",
+    "AG. SAN LUIS",
+    "AG. LA CALERA",
+    "AG. SALAVERRY"];
+const AGENCY_CODES = {
+    "AG. MEXICO": "072_AG. MEXICO",
+    "AG. MALL PLAZA ANGAMOS": "061_AG. MALL PLAZA ANGAMOS",
+    "AG. AVIACION": "AG. AVIACION",
+    "AG. TORRE AMERICA": "AG. TORRE AMERICA",
+    "AG. GAMARRA MODA PLAZA": "AG. GAMARRA MODA PLAZA",
+    "AG. PARQUE CANEPA": "AG. PARQUE CANEPA",
+    "AG. GAMARRA": "AG. GAMARRA",
+    "AG. CANADA": "AG. CANADA",
+    "AG. SAN BORJA": "AG. SAN BORJA",
+    "AG. FRAY LUIS DE LEON": "AG. FRAY LUIS DE LEON",
+    "AG. ANGAMOS": "AG. ANGAMOS",
+    "AG. RISSO": "AG. RISSO",
+    "AG. ARENALES": "AG. ARENALES",
+    "AG. PETIT THOUARS": "AG. PETIT THOUARS",
+    "AG. SAN BORJA SUR": "AG. SAN BORJA SUR",
+    "AG. C.C. LA RAMBLA": "AG. C.C. LA RAMBLA",
+    "AG. SAN LUIS": "AG. SAN LUIS",
+    "AG. LA CALERA": "AG. LA CALERA",
+    "AG. SALAVERRY": "AG. SALAVERRY"
+};
+let selectedAgency = localStorage.getItem("selectedAgency") || "AG. MEXICO";  
+let selectingSuggestion = false;
+
+/***** DATA convertida al formato del sistema *****/
+const PENDINGS = [
+  { title:"TOKEN (NATURAL)",fields:{
+    "Operacion":"ICPA","Analitica contable":"5212290000328","Importe":"25.00",
+    "Producto":"BXICDG","Banca":"PM1N","Referencia":"TOKEN","Por Menor":"TOKEN"
+  },notes:"No hay observaciones por el momento..."},
+
+  { title:"TOKEN (JURIDICO)",fields:{
+    "Operacion":"ICPA","Analitica contable":"5212290000328","Importe":"25.00",
+    "Producto":"BXICDG","Banca":"PQ1N","Referencia":"TOKEN","Por Menor":"TOKEN"
+  },notes:"No hay observaciones por el momento..."},
+
+  { title:"CARTA DE PRESENTACION",fields:{
+    "Operacion":"ICPA","Analitica contable":"5212290000351","Importe":"25.00",
+    "Producto":"INFCAR","Banca":"PM1N","Referencia":"CARTA DE PRESENTACION",
+    "Por Menor":"[NOMBRE Y APELLIDO - No. DNI]"
+  },notes:"No hay observaciones por el momento..."},
+
+  { title:"COPIA ESTADO DE CUENTA",fields:{
+    "Operacion":"ICPA","Analitica contable":["[SOLES] 5119190000128","[DOLARES] 5129190000127"],
+    "Importe por Mes":["[SOLES] 10.50","[DOLARES] 3.50"],
+    "Producto":"CMSFOT","Banca":"PM1N","Referencia":"COPIA DE EECC",
+    "Por Menor":"[NOMBRE Y APELLIDO - No. DNI]"
+  },notes:"No hay observaciones por el momento..."},
+
+  { title:"DISPOSICION VISA",fields:{
+    "Operacion":"ICPA","Analitica contable":"1919010000016",
+    "Unid. Operativa Emisora":["193...","061..."],
+    "Unid. Operativa Receptora":["000_OFICINA PRINC...","586..."],
+    "Referencia":"TARJETA",
+    "Por Menor":"[No. DE DNI - NOMBRE DEL CLIENTE]"
+  },notes:"No hay observaciones por el momento..."},
+
+  { title:"TRANSF EXT FUERA DE HORA",fields:{
+    "Operacion":"ICPA","Analitica contable":"2928070100409",
+    "Unid. Operativa Emisora":["DATO PREDETERMINADO DE AG.","DATO PREDETERMINADO DE AG."],
+    "Unid. Operativa Receptora":["DATO PREDETERMINADO DE AG.","AGENCIA_PLACEHOLDER"],
+    "Referencia":"TT EXT FUERA DE HORA",
+    "Por Menor":"[No. DE DNI - NOMBRE DEL CLIENTE]"
+  },notes:"No hay observaciones por el momento..."},
+
+  { title:"TRANSF EXT FUERA DE HORA (EUROS - OTRAS MONEDAS)",fields:{
+    "Operacion":"ICPA","Analitica contable":"1929010000015",
+    "Unid. Operativa Emisora":["DATO PREDETERMINADO DE AG.","DATO PREDETERMINADO DE AG."],
+    "Unid. Operativa Receptora":["DATO PREDETERMINADO DE AG.","AGENCIA_PLACEHOLDER"],
+    "Referencia":"TT EXT FUERA DE HORA",
+    "Por Menor":"[No. DE DNI - NOMBRE DEL CLIENTE]"
+  },notes:"No hay observaciones por el momento..."},
+
+  { title:"COMISION CLIENTE FALLECIDO",fields:{
+    "Operacion":"ICPA","Analitica contable":"5212290000310","Producto":"COMEPE",
+    "Banca":"PM1N","Referencia":"COMISION CLIENTE FALLECIDO",
+    "Por Menor":"[No. DE DNI - NOMBRE COMPLETO DEL CLIENTE FALLECIDO]"
+  },notes:"Se debe realizar el cobro de S/100.00 siempre que los fondos a cancelar excedan de S/1,000.00"},
+
+  { title:"DINERO ENCONTRADO EN HALL ELECTRÓNICO",fields:{
+    "Operacion":"ICPA","Analitica contable":"Operaciones por liquidar sujetas a encaje",
+    "Unid. Operativa Emisora":["DATO PREDETERMINADO DE AG.","AGENCIA_PLACEHOLDER"],
+    "Unid. Operativa Receptora":["373_PRODUCTOS...","555_SGCIA SERV. DE PR..."],
+    "Referencia":"BILLETE ENCONTRADO EN HALL ELECTRONICO",
+    "Por Menor":"[FECHA DEL DIA DE HOY]"
+  },notes:"Por los montos menores a S/.10.00 o US$3.00, deberán ser abonados a la VC de la agencia y después de 5 días útiles enviar como Ajuste Monetario."},
+
+  { title:"PAGO TOTAL DE CREDITO (MI VIVIENDA)",fields:{
+    "Operacion":"ICPA","Analitica contable":"1919010000016",
+    "Unid. Operativa Emisora":["000_OFICINA PRIN...","AGENCIA_PLACEHOLDER"],
+    "Unid. Operativa Receptora":["373_PRODUCTOS...","586_GOD CREDITOS Y V..."],
+    "Referencia":"PAGO CREDITO MI VIVIENDA",
+    "Por Menor":"[No. DE DNI - No. DE CREDITO A PAGAR]"
+  },notes:"No hay observaciones por el momento..."},
+
+  { title:"CARTA DE NO ADEUDO",fields:{
+    "Operacion":"ICPA","Analitica contable":"5212290000310","Importe":"25.00",
+    "Producto":"COMNAD","Referencia":"CARTA DE NO ADEUDO",
+    "Por Menor":"[No. DE DNI - NOMBRE DEL CLIENTE]"
+  },notes:"No hay observaciones por el momento..."},
+
+  { title:"DEUDA INMOBILIZADA",fields:{
+    "Operacion":"ICPA","Analitica contable":["[SOLES] 1919010000016","[DOLARES] 1929010000015"],
+    "Unid. Operativa Emisora":["DATO PREDETERMINADO DE AG.","AGENCIA_PLACEHOLDER"],
+    "Unid. Operativa Receptora":["111_DIRECCION C...","730_INSTRUCCIONES FI..."],
+    "Referencia":"DEUDA INMOBILIZADA - [No. DE CUENTA]",
+    "Por Menor":"[No. DE RUC - RAZON SOCIAL]"
+  },notes:"No hay observaciones por el momento..."},
+
+  { title:"BILLETE TRABADO",fields:{
+    "Operacion":"ICPA","Analitica contable":"1919010000016",
+    "Unid. Operativa Emisora":["DATO PREDETERMINADO DE AG.","AGENCIA_PLACEHOLDER"],
+    "Unid. Operativa Receptora":["373_PRODUCTOS...","555_SGCIA SERV. DE PR..."],
+    "Referencia":"BILLETE TRABADO [No. DE CAJERO]",
+    "Por Menor":"1B 20MN - 1B 10MN"
+  },notes:"No hay observaciones por el momento..."},
+
+  { title:"COMISION CHEQUE KNJ",fields:{
+    "Operacion":"ICPA",
+    "Analitica contable":["[SOLES] 5212020000010","[DOLARES] 5222020000019"],
+    "Importe MNA":["[0 a 2500] 3.50","[2501 a 12500] 8.50","[12501 a mas] 14.00"],
+    "Importe USD":["[0 a 1000] 1.00","[1001 a 5000] 2.50","[5001 a mas] 4.00"],
+    "Producto":"COBGEN","Banca":"SG1N","Referencia":"COMISION CHEQUE KNJ MP",
+    "Por Menor":"[RAZON SOCIAL - No. DE RUC]"
+  },notes:"No hay observaciones por el momento..."},
+
+  { title:"COMISION PLANILLA CTS",fields:{
+    "Operacion":"ICPA",
+    "Analitica contable":["[SOLES] 5212290000328","[DOLARES] 5222290000327"],
+    "Importe":["[SOLES - MENOR A 3000] 35.00","[DOLARES - MENOR A 1000] 12.00"],
+    "Producto":"SESCTS","Banca":"PQ1N","Referencia":"COMISION PLANILLA CTS",
+    "Por Menor":"[No. DE RUC]"
+  },notes:"La comisión solo debe cobrarse a las empresas con RUC 20 y que cuyos montos sean menores a S/3,000 o $1,000"},
+
+  { title:"PAGO DIRIGIDO PLAN (40-45-70-75)",fields:{
+    "Operacion":"ICPA",
+    "Analitica contable":["[SOLES] 1919010000016","[DOLARES] 1929010000015"],
+    "Unid. Operativa Emisora":["DATO PREDETERMINADO DE AG.","AGENCIA_PLACEHOLDER"],
+    "Unid. Operativa Receptora":["373_PRODUCTOS PERSO.","602_SGCIA SERV PARA CLIE."],
+    "Referencia":"TC PAGO DIRIGIDO",
+    "Por Menor":"[No. DE TC - PLAN - REC]"
+  },notes:"No hay observaciones por el momento..."},
+
+  { title:"COMISION ESTUDIO DE PODERES",fields:{
+    "Operacion":"ICPA","Analitica contable":"5212290000310","Importe":"40.00",
+    "Producto":"COMRPO","Banca":"PM1N","Referencia":"COMISION ESTUDIO DE PODERES",
+    "Por Menor":"[No. DE RUC - NOMBRE DE LA EMPRESA]"
+  },notes:"No hay observaciones por el momento..."},
+
+  { title:"ESTUDIO DE PODERES PARA COBRO DE CHEQUES",fields:{
+    "Operacion":"ICPA","Analitica contable":"5212290000310","Importe":"110.00 SOLES",
+    "Producto":"COMEPE","Banca":"PM1N","Referencia":"COMISION ESTUDIO DE PODERES CHEQUE",
+    "Por Menor":"[No. DE RUC - NOMBRE DE EMPRESA]"
+  },notes:"No hay observaciones por el momento..."},
+
+  { title:"RASTREO DE CUENTA",fields:{
+    "Operacion":"ICPA","Analitica contable":"5212290000310",
+    "Precio":["[+ 5 anos] 100.00","[- 5 anos] 50.00"],
+    "Producto":"COMRPO","Banca":"PM1N","Referencia":"Rastreo de cuenta",
+    "Por Menor":"[NOMBRE - Nro. DNI]"
+  },notes:"No hay observaciones por el momento..."},
+
+  { title:"DEPOSITO TRUNCO",fields:{
+    "Operacion":"ICPD","Analitica contable":"1919010000016",
+    "Unid. Operativa Emisora":["DATO PREDETERMINADO DE AG.","AGENCIA_PLACEHOLDER"],
+    "Unid. Operativa Receptora":["DATO PREDETERMINADO DE AG.","DATO PREDETERMINADO DE AG."],
+    "Referencia":"[Codigo de referencia brindado por el SPO/PP]",
+    "Por Menor":"[No. DE DNI - NOMBRE DEL CLIENTE]"
+  },notes:"Este deposito requiere validacion manual en algunos casos."},
+
+  { title:"AMORTIZACION DE DEUDA",fields:{
+    "Operacion":"ICPA",
+    "Analitica contable":["[SOLES] 1929010000015","[DOLARES] 1929010000016"],
+    "Unid. Operativa Emisora":["193...","061..."],
+    "Unid. Operativa Receptora":["111...","313..."],
+    "Referencia":"AMORT. CUENTA No.",
+    "Por Menor":"[NOMBRE - DOI]"
+  },notes:"No hay observaciones por el momento..."},
+
+  { title:"AMORTIZACION DE PAGARE",fields:{
+    "Operacion":"ICPA",
+    "Analitica contable":["[SOLES] 1929010000015","[DOLARES] 1919010000016"],
+    "Unid. Operativa Emisora":["193...","061..."],
+    "Unid. Operativa Receptora":["000_OFICINA PRINC...","787..."],
+    "Referencia":"AMORT. PAGARE No.",
+    "Por Menor":"[NOMBRE - DOI]"
+  },notes:"No hay observaciones por el momento..."},
+
+  { title:"LEASING",fields:{
+    "Operacion":"ICPA",
+    "Analitica contable":["[SOLES] 1919010000016","[DOLARES] 1929010000015"],
+    "Unid. Operativa Emisora":["AG _PREDETERMINADA.","AG_PREDETERMINADA"],
+    "Unid. Operativa Receptora":["COLOCAR SEGUN CORREO","COLOCAR SEGUN CORREO"],
+    "Referencia":"PAGO LEASING (No. de contrato)]",
+    "Por Menor":"[NOMBRE - DOI]"
+  },notes:"El pago de leasing se efectua bajo instrucción del FFNN"},
+
+  { title:"FALTANTE DE CAJA",fields:{
+    "Operacion":"ICPA",
+    "Analitica contable":["[SOLES] 1918020000016","[DOLARES] 1928020000015"],
+    "Unid. Operativa Emisora":["DATO PREDETERMINADO DE AG.","AGENCIA_PLACEHOLDER"],
+    "Unid. Operativa Receptora":["DATO PREDETERMINADO DE AG.","AGENCIA_PLACEHOLDER"],
+    "Referencia":"FALTANTE DE CAJA",
+    "Por Menor":"[MATRICULA + NOMBRE COMPLETO]"
+  },notes:"No hay observaciones por el momento..."},
+
+  { title:"SOBRANTE DE CAJA",fields:{
+    "Operacion":"ICPA",
+    "Analitica contable":["[SOLES] 2912010000010","[DOLARES] 2922201000019"],
+    "Unid. Operativa Emisora":["DATO PREDETERMINADO DE AG.","AGENCIA_PLACEHOLDER"],
+    "Unid. Operativa Receptora":["DATO PREDETERMINADO DE AG.","AGENCIA_PLACEHOLDER"],
+    "Referencia":"SOBRANTE DE CAJA",
+    "Por Menor":"[MATRICULA + NOMBRE COMPLETO]"
+  },notes:"No hay observaciones por el momento..."},
+
+  { title:"CENTAVOS (NEGATIVO)",fields:{
+    "Operacion":"ICPD","Analitica contable":"4619000000458",
+    "Centro de costo":"208",
+    "Referencia":"ELIMINACION DE MONEDA",
+    "Por Menor":"[MATRICULA - NOMBRE - FECHA]"
+  },notes:"No hay observaciones por el momento..."},
+
+  { title:"CENTAVOS (POSITIVO)",fields:{
+    "Operacion":"ICPA","Analitica contable":"5119190000151",
+    "Producto":"SOBROF","Banca":"NB1N","Referencia":"AJUSTE MONETARIO",
+    "Por Menor":"[MATRICULA - NOMBRE - FECHA]"
+  },notes:"No hay observaciones por el momento..."},
+
+  { title:"DESABASTECIMIENTO ATM (RECICLADOR)",fields:{
+    "Operacion":"ICPA",
+    "Analitica contable":["[SOLES] 1111090000070","[DOLARES] 1121090000079"],
+    "Importe":"[MONTO TOTAL DEL ATM DESABASTECIDO]",
+    "Unid. Operativa Emisora":["DATO PREDETERMINADO DE AG.","AGENCIA_PLACEHOLDER"],
+    "Unid. Operativa Receptora":["DATO PREDETERMINADO DE AG.","DATO PREDETERMINADO DE AG."],
+    "Referencia":"RECI [No. DE CAJERO]",
+    "Por Menor":"[FECHA DE HOY]"
+  },notes:"No hay observaciones por el momento..."},
+  
+  { title:"DESABASTECIMIENTO ATM (RETIRO)",fields:{
+    "Operacion":"ICPA",
+    "Analitica contable":["[SOLES] 1111090000070","[DOLARES] 1121090000079"],
+    "Importe":"[MONTO TOTAL DEL ATM DESABASTECIDO]",
+    "Unid. Operativa Emisora":["DATO PREDETERMINADO DE AG.","AGENCIA_PLACEHOLDER"],
+    "Unid. Operativa Receptora":["DATO PREDETERMINADO DE AG.","DATO PREDETERMINADO DE AG."],
+    "Referencia":"DEDI [No. DE CAJERO]RET",
+    "Por Menor":"[FECHA DE HOY]"
+  },notes:"No hay observaciones por el momento..."},
+  { title:"ABASTECIMIENTO ATM (RETIRO)",fields:{
+    "Operacion":"ICPD",
+    "Analitica contable":["[SOLES] 1111090000070","[DOLARES] 1121090000079"],
+    "Importe":"[MONTO SGN LA FICHA DEL LLENADO DEL ATM]",
+    "Unid. Operativa Emisora":["DATO PREDETERMINADO DE AG.","AGENCIA_PLACEHOLDER"],
+    "Unid. Operativa Receptora":["DATO PREDETERMINADO DE AG.","DATO PREDETERMINADO DE AG."],
+    "Referencia":"DIRE [No. DE CAJERO]RET",
+    "Por Menor":"[FECHA DE HOY]"
+  },notes:"Verificar monto segun ficha fisica."}
+];
+
+const TOKEN_TITLES = ["TOKEN (NATURAL)","TOKEN (JURIDICO)"];
+const TOKEN_GROUP_TITLE = "TOKEN";
+const favoriteKeyFromTitle = (title) => TOKEN_TITLES.includes(title) ? TOKEN_GROUP_TITLE : title;
+const HEART_FILLED = "\u2665";
+const HEART_OUTLINE = "\u2661";
+
+const getFavoriteTitles = () => {
+  const raw = JSON.parse(localStorage.getItem("favorites") || "[]");
+  const list = Array.isArray(raw) ? raw : [];
+  const normalized = [];
+  list.forEach(title => {
+    const key = favoriteKeyFromTitle(title);
+    if(!normalized.includes(key)) normalized.push(key);
+  });
+  if(list.length !== normalized.length || normalized.some((val,idx)=>val!==list[idx])){
+    localStorage.setItem("favorites",JSON.stringify(normalized));
+  }
+  return normalized;
+};
+
+const ATM_PENDING_TITLES = [
+  "ABASTECIMIENTO ATM (RETIRO)",
+  "DESABASTECIMIENTO ATM (RECICLADOR)",
+  "DESABASTECIMIENTO ATM (RETIRO)"
+];
+
+function getNonATMPendings(){
+  const favoritesSet = new Set(getFavoriteTitles());
+  return PENDINGS.filter(p => {
+    if(ATM_PENDING_TITLES.includes(p.title)) return false;
+    const favoriteKey = favoriteKeyFromTitle(p.title);
+    return !favoritesSet.has(favoriteKey);
+  });
+}
+
+function getRightbarDisplayPendings(){
+  const list=getNonATMPendings();
+  const display=[];
+  let tokenAdded=false;
+  list.forEach(item=>{
+    if(TOKEN_TITLES.includes(item.title)){
+      if(!tokenAdded){
+        display.push({title:TOKEN_GROUP_TITLE,isTokenGroup:true});
+        tokenAdded=true;
+      }
+    }else{
+      display.push(item);
+    }
+  });
+  if(!usageOrder.length) return display;
+  const prioritized=[];
+  usageOrder.forEach(key=>{
+    const index=display.findIndex(entry=>getUsageKey(entry.title)===key);
+    if(index>=0){
+      prioritized.push(display.splice(index,1)[0]);
+    }
+  });
+  return prioritized.concat(display);
+}
+
+const PAGE_SIZE = 12;
+let currentPage = 0;
+let activeChipTitle = null;
+let activeChipListId = null;
+const USAGE_ORDER_LIMIT = 50;
+const RECENT_USAGE_LIMIT = 3;
+let usageOrder = [];
+let recentUsageKeys = [];
+/***** Utilidades *****/
+const $ = (sel)=>document.querySelector(sel);
+const agencyBox = $("#agencyBox"),
+      suggestionsBox = $("#suggestions"),
+      pendingCards = $("#pendingCards"),
+      pendingSearch = $("#pendingSearch"),
+      clearBtn = $("#clearBtn"),
+      pendingList = $("#pendingList"),
+      results = $("#results"),
+      modeToggle = $("#modeToggle"),
+      ruc = $("#ruc"),
+      swift = $("#swift"),
+      favoritesList = $("#favoritesList"),
+      atmList = $("#atmList"),
+      prevBtn = $("#prevBtn"),
+      nextBtn = $("#nextBtn");
+
+function normalize(str){
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g,"").toLowerCase();
+}
+function escapeRegExp(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
+function abbreviateTitle(title){
+  return title.split(" ").map(word=>{
+    if(word.startsWith("(")&&word.endsWith(")")) return "(" + word.slice(1,4).toUpperCase() + ")";
+    if(word.length>8) return word.slice(0,7).toUpperCase()+".";
+    return word;
+  }).join(" ");
+}
+
+function setActiveChip(element, options = {}){
+  if(!element) return false;
+  const { force = false } = options;
+  const elementTitle = element.dataset && element.dataset.title ? element.dataset.title : null;
+  const elementListId = element.parentElement && element.parentElement.id ? element.parentElement.id : null;
+  if(!force && elementTitle === activeChipTitle && elementListId === activeChipListId){
+    clearActiveSelection({ preserveResults: true });
+    return false;
+  }
+  document.querySelectorAll(".chip-unificado.active, .pending-link.active").forEach(c=>c.classList.remove("active"));
+  element.classList.add("active");
+  activeChipTitle = elementTitle;
+  activeChipListId = elementListId;
+  return true;
+}
+
+function clearActiveSelection(options = {}){
+  const { preserveResults = true } = options;
+  const hasActiveChip = document.querySelector(".chip-unificado.active, .pending-link.active");
+  const cardVisible = pendingCards && pendingCards.style.display !== "none" && pendingCards.innerHTML.trim() !== "";
+  if(!hasActiveChip && !cardVisible) return;
+  document.querySelectorAll(".chip-unificado.active, .pending-link.active").forEach(c=>c.classList.remove("active"));
+  activeChipTitle = null;
+  activeChipListId = null;
+  showPendingCard(null, { preserveResults });
+}
+
+function getUsageKey(title){
+  if(!title) return null;
+  if(title === TOKEN_GROUP_TITLE) return TOKEN_GROUP_TITLE;
+  return TOKEN_TITLES.includes(title) ? TOKEN_GROUP_TITLE : title;
+}
+
+  function isTrackablePending(p){
+    if(!p || !p.title) return false;
+    if(ATM_PENDING_TITLES.includes(p.title)) return false;
+    const usageKey = getUsageKey(p.title);
+    if(!usageKey) return false;
+    const favoriteSet = new Set(getFavoriteTitles());
+    if(favoriteSet.has(favoriteKeyFromTitle(p.title)) || favoriteSet.has(usageKey)) return false;
+    return getNonATMPendings().some(item=>getUsageKey(item.title)===usageKey);
+  }
+  
+  function updateRecentUsageKeys(usageKey){
+    if(!usageKey) return;
+    const existingIndex = recentUsageKeys.indexOf(usageKey);
+    if(existingIndex > -1){
+      recentUsageKeys.splice(existingIndex,1);
+    }
+    recentUsageKeys.unshift(usageKey);
+    if(recentUsageKeys.length > RECENT_USAGE_LIMIT){
+      recentUsageKeys.length = RECENT_USAGE_LIMIT;
+    }
+  }
+  
+  function refreshRecentUsageHighlights(){
+    const chips=document.querySelectorAll(".chip-unificado");
+    if(!chips.length) return;
+    const recentSet=new Set(recentUsageKeys);
+    chips.forEach(chip=>{
+      if(chip.closest("#favoritesList")){
+        chip.classList.remove("recently-used");
+        return;
+      }
+      const title=chip.dataset ? chip.dataset.title : null;
+      const usageKey=getUsageKey(title);
+      if(usageKey && recentSet.has(usageKey)){
+        chip.classList.add("recently-used");
+      }else{
+        chip.classList.remove("recently-used");
+      }
+    });
+  }
+  
+  function recordPendingUsage(p){
+    if(!isTrackablePending(p)) return;
+    const usageKey = getUsageKey(p.title);
+    if(!usageKey) return;
+    updateRecentUsageKeys(usageKey);
+    const existingIndex = usageOrder.indexOf(usageKey);
+    if(existingIndex === 0){
+      refreshRecentUsageHighlights();
+      return;
+    }
+    if(existingIndex > -1){
+      usageOrder.splice(existingIndex,1);
+    }
+    usageOrder.unshift(usageKey);
+    if(usageOrder.length > USAGE_ORDER_LIMIT){
+      usageOrder.length = USAGE_ORDER_LIMIT;
+    }
+    currentPage = 0;
+    renderPendingsRight();
+  }
+
+function closeAllNotes(except = null){
+  document.querySelectorAll(".notes-box.active").forEach(box=>{
+    if(box !== except){
+      box.classList.remove("active");
+    }
+  });
+}
+
+function focusChipForPending(p){
+  if(!p || !p.title) return;
+  const favoriteKey=favoriteKeyFromTitle(p.title);
+
+  const focusChipElement = (chip)=>{
+    if(!chip) return false;
+    setActiveChip(chip,{force:true});
+    if(typeof chip.scrollIntoView === "function"){
+      try{ chip.scrollIntoView({block:"nearest",behavior:"smooth"}); }
+      catch(e){ chip.scrollIntoView(); }
+    }
+    return true;
+  };
+
+  let chip = favoritesList.querySelector(`.chip-unificado[data-title="${favoriteKey}"]`);
+  if(focusChipElement(chip)) return;
+
+  const targetTitle = favoriteKey === TOKEN_GROUP_TITLE ? TOKEN_GROUP_TITLE : p.title;
+  const displayList = getRightbarDisplayPendings();
+  const index = displayList.findIndex(item=>item.title===targetTitle);
+  if(index>=0){
+    const desiredPage = Math.floor(index / PAGE_SIZE);
+    if(currentPage !== desiredPage){
+      currentPage = desiredPage;
+      renderPendingsRight();
+    }
+    chip = pendingList.querySelector(`.chip-unificado[data-title="${targetTitle}"]`);
+    if(focusChipElement(chip)) return;
+  }
+
+  chip = atmList.querySelector(`.chip-unificado[data-title="${p.title}"]`);
+  if(focusChipElement(chip)) return;
+
+  clearActiveSelection({preserveResults:true});
+}
+
+/***** Copiar con highlight *****/
+function copyToClipboard(text,el){
+  try{
+    navigator.clipboard.writeText(text.trim()).then(()=>{
+      el.classList.add("highlight");
+      setTimeout(()=>el.classList.remove("highlight"),400);
+    });
+  }catch(e){console.error("Error copiando: ", e);}
+}
+ruc.addEventListener("click",()=>copyToClipboard(ruc.textContent,ruc));
+
+/***** Extraer texto copiable *****/
+function extractCopyable(text){
+  if(typeof text!=="string") return text;
+  let cleaned=text.replace(/\[.*?\]/g,"").replace(/<.*?>/g,"").trim();
+  return cleaned || null;
+}
+
+function isNonCopyableValue(value){
+  if(typeof value!=="string") return false;
+  const normalized=value.toUpperCase();
+  return normalized.includes("COLOCAR SEGUN CORREO") || normalized.includes("NOMBRE - DOI");
+}
+
+/***** AGENCIA *****/
+function renderAgencyChip(active=true){
+  agencyBox.innerHTML = `<div id="agencyChip" class="agency-chip${active?'':' selected'}">${selectedAgency}</div>`;
+  $("#agencyChip").onclick = ()=>activateAgencyInput();
+}
+function activateAgencyInput(){
+  agencyBox.innerHTML = `<input id="agencyInput" class="agency-input" type="text" value=""/>`;
+  const input = $("#agencyInput");
+  input.focus();
+
+  input.addEventListener("input",()=>showSuggestions(input.value));
+  input.addEventListener("blur",()=>{
+    setTimeout(()=>{
+      if(!selectingSuggestion){
+        suggestionsBox.style.display="none";
+        renderAgencyChip(true);
+      }
+      selectingSuggestion=false;
+    },150);
+  });
+}
+function showSuggestions(query) {
+  const qn = normalize(query.trim());
+
+  if (!qn) {
+    suggestionsBox.style.display = "none";
+    return;
+  }
+
+  // Buscar coincidencias
+  const matches = AGENCIES.filter(a => normalize(a).includes(qn));
+
+  // Limitar maximo 3 resultados
+  const limited = matches.slice(0, 3);
+
+  if (limited.length === 0) {
+    suggestionsBox.style.display = "none";
+    return;
+  }
+
+  suggestionsBox.innerHTML = "";
+
+  limited.forEach(name => {
+    const div = document.createElement("div");
+    div.className = "suggestion-item";
+    div.textContent = name;
+    div.addEventListener("click", () => {
+      selectingSuggestion = true;
+      selectedAgency = name;
+      localStorage.setItem("selectedAgency", selectedAgency);
+      location.reload();
+    });
+    suggestionsBox.appendChild(div);
+  });
+
+    // Alinear debajo del input dentro del contenedor
+  const input = document.getElementById("agencyInput");
+  if (input) {
+    const inputRect = input.getBoundingClientRect();
+    const containerRect = agencyBox.getBoundingClientRect();
+
+    const relativeLeft = inputRect.left - containerRect.left;
+    const relativeTop = input.offsetHeight + 4;
+
+    Object.assign(suggestionsBox.style, {
+      display: "block",
+      position: "absolute",
+      width: input.offsetWidth + "px",
+      left: relativeLeft + "px",
+      top: relativeTop + "px",
+      zIndex: "300",
+      borderRadius: "10px",
+      background: "var(--card)",
+      boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+      maxHeight: "160px",
+      overflowY: "auto",
+      opacity: "0",
+      transform: "translateY(-5px)",
+      transition: "opacity 0.2s ease, transform 0.2s ease"
+    });
+
+    //  Pequeno delay para que se note la animacion
+    requestAnimationFrame(() => {
+      suggestionsBox.style.opacity = "1";
+      suggestionsBox.style.transform = "translateY(0)";
+    });
+  }
+}
+
+
+document.addEventListener("click", (e) => {
+  const input = document.getElementById("agencyInput");
+  if (!input) return;
+  if (!input.contains(e.target) && !suggestionsBox.contains(e.target)) {
+    suggestionsBox.style.display = "none";
+  }
+});
+
+
+
+/***** BUSCADOR *****/
+function searchPendings(q){
+  const text = q.trim();
+  if(!text) return [];
+  const boundary = new RegExp("\\b"+escapeRegExp(text),"i");
+  const inc = new RegExp(escapeRegExp(text),"i");
+  const normalizedQuery = normalize(text);
+  const maybeDigits = text.replace(/\D/g,"");
+  const queryHasDigits = maybeDigits.length >= 4;
+  if(maybeDigits.length > 0 && maybeDigits.length < 4) return [];
+
+  const matchesAnalitica = (pending)=>{
+    if(!pending || !pending.fields) return false;
+    return Object.entries(pending.fields).some(([key,value])=>{
+      if(!key) return false;
+      const keyNormalized = normalize(String(key));
+      if(!keyNormalized.includes("analiticacontable")) return false;
+      const values = Array.isArray(value) ? value : [value];
+      return values.some(val=>{
+        if(val===null || val===undefined) return false;
+        const strVal=String(val);
+        if(queryHasDigits){
+          const cleanAnalitica = strVal.replace(/\D/g,"");
+          return cleanAnalitica.includes(maybeDigits);
+        }
+        return inc.test(strVal) || normalize(strVal).includes(normalizedQuery);
+      });
+    });
+  };
+
+  return PENDINGS.filter(p=>{
+    const title = p.title || "";
+    if(boundary.test(title) || inc.test(title)) return true;
+    return matchesAnalitica(p);
+  });
+}
+function renderSearchResults(filter=""){
+  results.innerHTML="";
+  pendingCards.style.display="none";
+  pendingCards.innerHTML="";
+  const list = searchPendings(filter);
+  if(!filter.trim()) return;
+  list.slice(0,9).forEach(p=>{
+    const div=document.createElement("div");
+    div.className="result-item";
+    div.textContent=p.title;
+    div.addEventListener("click",()=>{
+      results.innerHTML="";
+      showPendingCard(p);
+      focusChipForPending(p);
+    });
+    results.appendChild(div);
+  });
+}
+pendingSearch.addEventListener("input",()=>{
+  renderSearchResults(pendingSearch.value);
+  clearBtn.style.display = pendingSearch.value ? "block" : "none";
+});
+clearBtn.addEventListener("click",()=>{
+  pendingSearch.value="";
+  results.innerHTML="";
+  clearBtn.style.display="none";
+});
+
+/* Tarjetas */
+function makeRow(name,value){
+  const row=document.createElement("div");
+  const label=document.createElement("div"); label.className="label"; label.textContent=name;
+  row.appendChild(label);
+
+  let chips=[];
+  if(Array.isArray(value)){
+    chips=value.map(v=>{
+      let displayText=v;
+      if(displayText==="AGENCIA_PLACEHOLDER"){ displayText=selectedAgency; }
+      if(typeof displayText==="string" && displayText.includes("[SOLES]")) displayText=displayText.replace("[SOLES]","[MNA]");
+      if(typeof displayText==="string" && displayText.includes("[DOLARES]")) displayText=displayText.replace("[DOLARES]","[USD]");
+      const chip=document.createElement("span"); chip.className="chip"; chip.textContent=displayText;
+      const noCopy=isNonCopyableValue(displayText);
+      const cleaned=extractCopyable(displayText);
+      if(noCopy){
+        chip.classList.add("chip--nocopy");
+        chip.title="No disponible para copiar";
+      }
+      if(cleaned && !noCopy){ chip.addEventListener("click",()=>copyToClipboard(cleaned,chip)); }
+      return chip;
+    });
+  } else {
+    let displayText=value;
+    if(displayText==="AGENCIA_PLACEHOLDER"){ displayText=selectedAgency; }
+    if(typeof displayText==="string" && displayText.includes("[SOLES]")) displayText=displayText.replace("[SOLES]","[MNA]");
+    if(typeof displayText==="string" && displayText.includes("[DOLARES]")) displayText=displayText.replace("[DOLARES]","[USD]");
+    const chip=document.createElement("span"); chip.className="chip"; chip.textContent=displayText;
+    const noCopy=isNonCopyableValue(displayText);
+    const cleaned=extractCopyable(displayText);
+    if(noCopy){
+      chip.classList.add("chip--nocopy");
+      chip.title="No disponible para copiar";
+    }
+    if(cleaned && !noCopy){ chip.addEventListener("click",()=>copyToClipboard(cleaned,chip)); }
+    chips=[chip];
+  }
+
+  setTimeout(()=>{
+    let naturalWidth=Math.max(...chips.map(c=>c.offsetWidth));
+    const baseMin = chips.length > 2 ? 150 : 200;
+    const cap = chips.length > 2 ? 220 : 260;
+    const targetWidth = Math.min(Math.max(naturalWidth, baseMin), cap);
+    chips.forEach(c=>c.style.minWidth=targetWidth+"px");
+  },0);
+
+  const box=document.createElement("div"); box.className="chip-group";
+  chips.forEach(c=>box.appendChild(c));
+  row.appendChild(box);
+  return row;
+  
+  
+};
+
+function handleFavoriteToggle(item, star){
+  const favoriteKey=favoriteKeyFromTitle(item.title);
+  let favs=getFavoriteTitles();
+  const wasFavorite=favs.includes(favoriteKey);
+  let changed=false;
+  if(wasFavorite){
+    favs=favs.filter(f=>f!==favoriteKey);
+    activeChipTitle=favoriteKey;
+    activeChipListId="pendingList";
+    changed=true;
+  } else if(favs.length<3){
+    if(!favs.includes(favoriteKey)){
+      favs=[...favs,favoriteKey];
+    }
+    activeChipTitle=favoriteKey;
+    activeChipListId="favoritesList";
+    changed=true;
+  }
+  if(!changed) return;
+  localStorage.setItem("favorites",JSON.stringify(favs));
+  renderFavorites();
+  renderPendingsRight();
+  const isFavoriteNow=favs.includes(favoriteKey);
+  document.querySelectorAll(".star").forEach(st=>{
+    if(st.dataset && st.dataset.favoriteKey===favoriteKey){
+      if(isFavoriteNow){
+        st.classList.add("active");
+        st.textContent=HEART_FILLED;
+      } else {
+        st.classList.remove("active");
+        st.textContent=HEART_OUTLINE;
+      }
+    }
+  });
+  if(star){
+    if(isFavoriteNow){
+      star.classList.add("active");
+      star.textContent=HEART_FILLED;
+    } else {
+      star.classList.remove("active");
+      star.textContent=HEART_OUTLINE;
+    }
+  }
+  requestAnimationFrame(()=>{
+    const targetList=isFavoriteNow?favoritesList:pendingList;
+    const chip=Array.from(targetList.querySelectorAll(".chip-unificado")).find(el=>el.dataset.title===favoriteKey);
+    const clearActiveState=()=>clearActiveSelection();
+    if(chip){
+      setActiveChip(chip,{force:true});
+    }else if(TOKEN_TITLES.includes(item.title)){
+      const tokenChip=pendingList.querySelector(`.chip-unificado[data-title="${TOKEN_GROUP_TITLE}"]`);
+      if(tokenChip) setActiveChip(tokenChip,{force:true});
+      else clearActiveState();
+    }else{
+      clearActiveState();
+    }
+  });
+}
+
+
+function makeCard(item){
+  const container=document.createElement("div"); container.className="card";
+  const header=document.createElement("div"); header.className="summary";
+
+  const info=document.createElement("span");
+  info.className="info-icon";
+  info.textContent="!";
+  header.appendChild(info);
+
+  const title=document.createElement("div"); title.className="card-title"; title.textContent=item.title;
+  header.appendChild(title);
+
+  const star=document.createElement("span"); star.className="star";
+  const favoriteKey=favoriteKeyFromTitle(item.title);
+  const storedFavorites=getFavoriteTitles();
+  if(storedFavorites.includes(favoriteKey)){
+    star.classList.add("active");
+    star.textContent=HEART_FILLED;
+  } else {
+    star.textContent=HEART_OUTLINE;
+  }
+  star.dataset.favoriteKey = favoriteKey;
+  star.addEventListener("click",(e)=>{
+    e.stopPropagation();
+    handleFavoriteToggle(item, star);
+  });
+  header.appendChild(star);
+  container.appendChild(header);
+
+  const notes=document.createElement("div");
+  notes.className="notes-box";
+  notes.textContent=item.notes || "No hay observaciones por el momento...";
+  container.appendChild(notes);
+
+  info.addEventListener("click",(event)=>{
+    event.stopPropagation();
+    const isAlreadyOpen = notes.classList.contains("active");
+    closeAllNotes(notes);
+    if(isAlreadyOpen){
+      notes.classList.remove("active");
+      return;
+    }
+    notes.classList.add("active");
+
+    const handleOutside = (ev)=>{
+      if(!notes.contains(ev.target) && ev.target !== info){
+        notes.classList.remove("active");
+        document.removeEventListener("click", handleOutside);
+      }
+    };
+    setTimeout(()=>document.addEventListener("click", handleOutside),0);
+  });
+
+  const content=document.createElement("div"); content.className="content";
+  for(const [k,v] of Object.entries(item.fields)){ content.appendChild(makeRow(k,v)); }
+  container.appendChild(content);
+
+  return container;
+}
+
+function showPendingCard(p, options = {}){
+  const { preserveResults = false } = options;
+  if(!preserveResults){
+    results.innerHTML="";
+  }
+  pendingCards.innerHTML="";
+  if(!p){
+    pendingCards.style.display="none";
+    return;
+  }
+  recordPendingUsage(p);
+  pendingCards.style.display="flex";
+  const showTokenGroup = p.isTokenGroup || (p.title && TOKEN_TITLES.includes(p.title));
+  if(showTokenGroup){
+    const wrapper=document.createElement("div");
+    wrapper.className="token-card-wrapper";
+    TOKEN_TITLES.forEach(tokenTitle=>{
+      const tokenPending=PENDINGS.find(x=>x.title===tokenTitle);
+      if(tokenPending){
+        const card=makeCard(tokenPending);
+        card.classList.add("token-card");
+        wrapper.appendChild(card);
+      }
+    });
+    pendingCards.appendChild(wrapper);
+    return;
+  }
+  pendingCards.appendChild(makeCard(p));
+}
+
+/***** Favoritos *****/
+function renderFavorites(){
+  const stored=getFavoriteTitles();
+  if(stored.length){
+    const favoriteUsageKeys=new Set(stored.map(getUsageKey));
+    usageOrder=usageOrder.filter(key=>!favoriteUsageKeys.has(key));
+  }
+  if(activeChipListId==="favoritesList" && !stored.includes(activeChipTitle)){
+    activeChipTitle = null;
+    activeChipListId = null;
+  }
+  favoritesList.innerHTML="";
+  stored.forEach(title=>{
+    let clickData=null;
+    let displayText=abbreviateTitle(title);
+    if(title===TOKEN_GROUP_TITLE){
+      clickData={title:TOKEN_GROUP_TITLE,isTokenGroup:true};
+    }else{
+      const p=PENDINGS.find(x=>x.title===title);
+      if(!p) return;
+      clickData=p;
+      displayText=abbreviateTitle(p.title);
+    }
+    const div=document.createElement("div");
+    div.className="chip-unificado";
+    div.textContent=displayText;
+    div.dataset.title=title;
+    if(title===activeChipTitle && activeChipListId==="favoritesList") div.classList.add("active");
+    div.addEventListener("click",()=>{
+      if(setActiveChip(div)){
+        showPendingCard(clickData);
+      }
+    });
+    favoritesList.appendChild(div);
+  });
+  refreshRecentUsageHighlights();
+  requestAnimationFrame(()=>{
+    const chip=favoritesList.querySelector(".chip-link");
+    const chipHeight=chip?chip.offsetHeight+8:40;
+    favoritesList.style.minHeight=(chipHeight*3)+"px";
+  });
+}
+
+/***** ATM *****/
+function renderATM(){
+  atmList.innerHTML="";
+  ATM_PENDING_TITLES.forEach(title=>{
+    const p=PENDINGS.find(x=>x.title===title);
+    if(p){
+      const div=document.createElement("div");
+      div.className="chip-unificado";
+      div.textContent=abbreviateTitle(p.title);
+      div.dataset.title=p.title;
+      if(p.title===activeChipTitle && activeChipListId==="atmList") div.classList.add("active");
+      div.addEventListener("click",()=>{
+        if(setActiveChip(div)){
+          showPendingCard(p);
+        }
+      });
+      atmList.appendChild(div);
+    }
+  });
+  refreshRecentUsageHighlights();
+}
+
+/***** Pendientes derecha *****/
+function renderPendingsRight(){
+  const displayList=getRightbarDisplayPendings();
+  const total = displayList.length;
+  if(total === 0){
+    currentPage = 0;
+    pendingList.innerHTML="";
+    updateNavButtons(total);
+    return;
+  }
+  const maxPage = Math.max(Math.ceil(total / PAGE_SIZE) - 1, 0);
+  if(currentPage > maxPage){
+    currentPage = maxPage;
+  }
+  pendingList.innerHTML="";
+  const start=currentPage*PAGE_SIZE;
+  const end=start+PAGE_SIZE;
+  const slice=displayList.slice(start,end);
+  slice.forEach(item=>{
+    const div=document.createElement("div");
+    div.className="chip-unificado";
+    div.textContent=abbreviateTitle(item.title);
+    div.dataset.title=item.title;
+    if(item.title===activeChipTitle && activeChipListId==="pendingList") div.classList.add("active");
+    div.addEventListener("click", () => {
+      if(setActiveChip(div)){
+        showPendingCard(item);
+      }
+    });
+
+    pendingList.appendChild(div);
+  });
+  updateNavButtons(total);
+  refreshRecentUsageHighlights();
+}
+function updateNavButtons(totalItems = getRightbarDisplayPendings().length){
+  prevBtn.classList.remove("active","disabled");
+  nextBtn.classList.remove("active","disabled");
+  if(currentPage>0) prevBtn.classList.add("active"); else prevBtn.classList.add("disabled");
+  if((currentPage+1)*PAGE_SIZE<totalItems) nextBtn.classList.add("active"); else nextBtn.classList.add("disabled");
+}
+prevBtn.addEventListener("click",()=>{ if(currentPage>0){ currentPage--; renderPendingsRight(); } });
+nextBtn.addEventListener("click",()=>{ if((currentPage+1)*PAGE_SIZE<getRightbarDisplayPendings().length){ currentPage++; renderPendingsRight(); } });
+
+/***** Modo claro/oscuro *****/
+function updateModeBtn(){
+  if(!modeToggle) return;
+  const isLight=document.body.classList.contains("light");
+  modeToggle.classList.toggle("is-light", isLight);
+  modeToggle.setAttribute("aria-label", isLight ? "Cambiar a modo oscuro" : "Cambiar a modo claro");
+}
+if(modeToggle){
+  modeToggle.addEventListener("click",()=>{
+    document.body.classList.toggle("light");
+    localStorage.setItem("theme", document.body.classList.contains("light") ? "light" : "dark");
+    updateModeBtn();
+  });
+  modeToggle.addEventListener("keydown",(event)=>{
+    if(event.key==="Enter" || event.key===" "){
+      event.preventDefault();
+      document.body.classList.toggle("light");
+      localStorage.setItem("theme", document.body.classList.contains("light") ? "light" : "dark");
+      updateModeBtn();
+    }
+  });
+}
+
+pendingCards.addEventListener("click", (event)=>{
+  if(event.target === pendingCards){
+    clearActiveSelection();
+  }
+});
+
+/***** Init *****/
+renderAgencyChip(true);
+renderPendingsRight();
+renderFavorites();
+renderATM();
+updateModeBtn();
+showPendingCard(null,{preserveResults:true});
+  </script>
+</body>
+</html>
+
